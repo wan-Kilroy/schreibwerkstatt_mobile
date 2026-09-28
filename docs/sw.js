@@ -1,7 +1,7 @@
 /* Service worker: keeps every file of the app on the phone, so it starts without waiting for the network
    (and the 13 MB of Python are downloaded only once).  build.py fills in VERSION and FILES; a new VERSION
    (any file changed) downloads the new files in the background and is used from the next start on. */
-const VERSION = 'sw-2194598fa7c1';
+const VERSION = 'sw-b2f97cee5d24';
 const FILES = [
 "./",
 "app.css",

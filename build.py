@@ -56,7 +56,7 @@ def fail(msg):
 def patch_index(html):
     """The desktop index.html plus: viewport for the iPhone notch, home-screen tags, mobile.css, boot.js and the phone texts before main.js."""
     html, n = re.subn(r'<meta name="viewport" content="[^"]*">',
-                      '<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">\n' + HEAD_EXTRA.rstrip("\n"),
+                      '<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">\n' + HEAD_EXTRA.rstrip("\n"),
                       html, count=1)
     if n != 1:
         fail("index.html: <meta name=\"viewport\"> not found")

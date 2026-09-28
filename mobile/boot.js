@@ -12,7 +12,7 @@
 
   worker.onmessage = e => {
     const m = e.data || {};
-    if (m.type === 'ready') { ready = true; readyWaiters.splice(0).forEach(f => f()); hideSplash(); return; }
+    if (m.type === 'ready') { ready = true; readyWaiters.splice(0).forEach(f => f()); hideSplash(); setTimeout(() => maybeOnboard(), 600); return; }
     if (m.type === 'boot-error') { bootError = m.error; readyWaiters.splice(0).forEach(f => f()); showBootError(m.error); return; }
     const w = waiting.get(m.id);
     if (w) { waiting.delete(m.id); w(m); }
@@ -160,8 +160,8 @@
 
 
   /* ---------- ☰ menu: languages, level, topic and the practice buttons live here instead of on the screen ---------- */
-  const MT = { zh: { menu: '菜单', langs: '语言和水平', practice: '练习' }, en: { menu: 'Menu', langs: 'Languages and level', practice: 'Practice' },
-    de: { menu: 'Menü', langs: 'Sprachen und Niveau', practice: 'Üben' } };
+  const MT = { zh: { menu: '菜单', langs: '语言和水平', practice: '练习', size: '字号' }, en: { menu: 'Menu', langs: 'Languages and level', practice: 'Practice', size: 'Text size' },
+    de: { menu: 'Menü', langs: 'Sprachen und Niveau', practice: 'Üben', size: 'Schriftgröße' } };
   const mt = k => (MT[lang()] || MT.zh)[k];
   function addMenu() {
     const top = document.querySelector('.top'), row = document.querySelector('.top-in');
@@ -174,8 +174,8 @@
     const panel = document.createElement('div');
     panel.id = 'mMenu'; panel.className = 'm-menu'; panel.hidden = true;
     const sec = (cls, node) => { const d = document.createElement('div'); d.className = 'm-sec ' + cls; const h = document.createElement('div'); h.className = 'm-h'; d.append(h, node); return d; };
-    const sLang = sec('m-langs', langbar), sPrac = sec('m-prac', toolbar);
-    panel.append(sLang, sPrac);
+    const sLang = sec('m-langs', langbar), sPrac = sec('m-prac', toolbar), sFz = sec('m-fzs', fzControl());
+    panel.append(sLang, sPrac, sFz);
     top.appendChild(panel);
     const topic = document.getElementById('topic');
     const badge = () => {
@@ -185,13 +185,14 @@
       btn.setAttribute('aria-label', mt('menu'));
       sLang.querySelector('.m-h').textContent = mt('langs');
       sPrac.querySelector('.m-h').textContent = mt('practice');
+      sFz.querySelector('.m-h').textContent = mt('size');
     };
     const setOpen = open => {
       panel.hidden = !open; btn.setAttribute('aria-expanded', String(open));
       if (open) { sPrac.hidden = !document.getElementById('practice').classList.contains('active'); badge(); }
     };
     btn.addEventListener('click', e => { e.stopPropagation(); setOpen(panel.hidden); });
-    document.addEventListener('click', e => { if (!panel.hidden && !panel.contains(e.target) && !btn.contains(e.target)) setOpen(false); });
+    document.addEventListener('click', e => { if (!panel.hidden && e.target.isConnected && !panel.contains(e.target) && !btn.contains(e.target)) setOpen(false); });
     toolbar.querySelectorAll('button').forEach(b => b.addEventListener('click', () => setOpen(false)));
     document.addEventListener('keydown', e => { if (e.key === 'Escape') setOpen(false); });
     if (topic) topic.addEventListener('input', badge);
@@ -200,6 +201,80 @@
     new MutationObserver(badge).observe(document.documentElement, { attributes: true, attributeFilter: ['lang'] });
     setInterval(badge, 1500);                     // the page sets the selects from the saved settings without an event
     badge();
+  }
+
+
+  /* ---------- text size (☰ menu), remembered on this device ---------- */
+  const FZ = [0.8, 0.9, 1, 1.1];
+  const FZT = { zh: ['小', '较小', '标准', '大'], en: ['S', 'M', 'Default', 'L'], de: ['S', 'M', 'Standard', 'L'] };
+  const store = { get(k) { try { return localStorage.getItem(k); } catch { return null; } }, set(k, v) { try { localStorage.setItem(k, v); } catch { /* private mode */ } } };
+  function applyFz(z) { document.documentElement.style.setProperty('--fz', String(z)); }
+  applyFz(Number(store.get('sw_fz')) || 1);
+  function fzControl() {
+    const d = document.createElement('div');
+    d.className = 'm-fz';
+    const paint = () => {
+      const cur = Number(store.get('sw_fz')) || 1, names = FZT[lang()] || FZT.zh;
+      d.replaceChildren(...FZ.map((z, i) => {
+        const b = document.createElement('button');
+        b.type = 'button'; b.className = 'btn sm'; b.textContent = names[i]; b.style.fontSize = Math.round(14 * z) + 'px';
+        b.setAttribute('aria-pressed', String(z === cur));
+        b.onclick = () => { store.set('sw_fz', String(z)); applyFz(z); paint(); };
+        return b;
+      }));
+    };
+    paint();
+    new MutationObserver(paint).observe(document.documentElement, { attributes: true, attributeFilter: ['lang'] });
+    return d;
+  }
+
+  /* ---------- first start: choose the language of the app (= explanation language), what to learn, the level ---------- */
+  const ONB = [
+    { key: 'explain', title: '讲解语言\nLanguage of the app\nSprache der App', sub: 'App 界面、讲解和练习题都用这种语言。\nMenus, explanations and exercises.\nMenüs, Erklärungen und Übungen.',
+      opts: [['zh', '中文'], ['en', 'English'], ['de', 'Deutsch']],
+      note: 'Français : bientôt comme langue de l’application.\n法语界面还在准备中。' },
+    { key: 'learn', title: { zh: '你想学哪种语言？', en: 'Which language do you want to learn?', de: 'Welche Sprache möchtest du lernen?' },
+      opts: [['de', { zh: '德语', en: 'German', de: 'Deutsch' }], ['en', { zh: '英语', en: 'English', de: 'Englisch' }],
+        ['fr', { zh: '法语', en: 'French', de: 'Französisch' }], ['zh', { zh: '中文', en: 'Chinese', de: 'Chinesisch' }]] },
+    { key: 'level', title: { zh: '你现在的水平？', en: 'Your level?', de: 'Dein Niveau?' }, sub: { zh: '随时可以在 ☰ 菜单里改。', en: 'You can change it any time in the ☰ menu.', de: 'Jederzeit im ☰-Menü änderbar.' },
+      opts: ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'].map(l => [l, l]) },
+  ];
+  async function maybeOnboard() {
+    if (store.get('sw_onboarded')) return;
+    let fresh = false;
+    try { const r = await window.fetch('/api/settings'); fresh = !!(await r.json()).fresh; } catch { return; }
+    if (!fresh) { store.set('sw_onboarded', '1'); return; }
+    const pick = {};
+    const box = document.createElement('div');
+    box.className = 'm-onb';
+    document.body.appendChild(box);
+    const txt = v => (typeof v === 'string' ? v : v ? (v[pick.explain] || v.zh) : '');
+    const step = i => {
+      const s = ONB[i];
+      box.innerHTML = '<div class="m-onb-in"><div class="logo">Ä</div><h2></h2><p class="m-onb-sub"></p><div class="m-onb-opts"></div><p class="m-onb-note"></p></div>';
+      box.querySelector('h2').textContent = txt(s.title);
+      box.querySelector('.m-onb-sub').textContent = txt(s.sub);
+      box.querySelector('.m-onb-note').textContent = txt(s.note);
+      const opts = box.querySelector('.m-onb-opts');
+      if (s.key === 'level') opts.classList.add('grid3');
+      for (const [v, label] of s.opts) {
+        const b = document.createElement('button');
+        b.type = 'button'; b.className = 'btn m-onb-opt'; b.textContent = txt(label); b.dataset.v = v;
+        b.onclick = () => { pick[s.key] = v; if (i + 1 < ONB.length) step(i + 1); else finish(); };
+        opts.appendChild(b);
+      }
+    };
+    const set = (id, v) => { const el = document.getElementById(id); if (el && el.value !== v) { el.value = v; el.dispatchEvent(new Event('change')); } };
+    const finish = async () => {
+      box.remove();
+      store.set('sw_onboarded', '1');
+      set('selExplain', pick.explain);
+      await new Promise(r => setTimeout(r, 300));
+      set('selLearn', pick.learn);
+      await new Promise(r => setTimeout(r, 300));
+      set('selLevel', pick.level);
+    };
+    step(0);
   }
 
   function onReady() {
@@ -221,5 +296,14 @@
 
   if (navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(() => {});
   if ('serviceWorker' in navigator && window.isSecureContext && !/[?&]nosw\b/.test(location.search))
-    window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
+    window.addEventListener('load', () => {
+      const hadOld = !!navigator.serviceWorker.controller, t0 = Date.now();
+      navigator.serviceWorker.register('sw.js').then(r => r.update()).catch(() => {});
+      /* a new version was just installed: reload once so it is used now, not only at the next start
+         (only right after opening and while nothing is typed, so no work is lost) */
+      navigator.serviceWorker.addEventListener('controllerchange', () => {
+        const inp = document.getElementById('input');
+        if (hadOld && Date.now() - t0 < 60000 && !(inp && inp.value.trim())) location.reload();
+      });
+    });
 })();
