@@ -106,6 +106,17 @@ class Mobile(unittest.TestCase):
         pg.screenshot(path=os.path.join(HERE, "shot-feedback.png"))
         # nothing sticks out sideways on a 390 px screen
         self.assertLessEqual(pg.evaluate("() => document.documentElement.scrollWidth"), 390)
+        # keyboard open (the visible height shrinks): toolbars hide, the conversation keeps the space
+        pg.focus("#input")
+        pg.set_viewport_size({"width": 390, "height": 420})
+        pg.wait_for_function("() => document.documentElement.classList.contains('kb')", timeout=5000)
+        self.assertTrue(pg.is_hidden("#practice .toolbar")); self.assertTrue(pg.is_hidden(".langbar"))
+        self.assertTrue(pg.is_visible("#btnSend")); self.assertTrue(pg.is_visible(".tabs"))
+        self.assertGreater(pg.evaluate("() => document.getElementById('stream').clientHeight"), 150)
+        pg.screenshot(path=os.path.join(HERE, "shot-keyboard.png"))
+        pg.set_viewport_size({"width": 390, "height": 844})
+        pg.wait_for_function("() => !document.documentElement.classList.contains('kb')", timeout=5000)
+        self.assertTrue(pg.is_visible("#practice .toolbar"))
         # retype (跟着敲) by tapping
         pg.locator(".fb-actions button", has_text="跟着敲").last.tap()
         target = pg.inner_text(".rt-target")

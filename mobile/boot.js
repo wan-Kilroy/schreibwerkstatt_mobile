@@ -93,11 +93,24 @@
 
   /* ---------- iOS: keep the input above the keyboard ---------- */
   const vv = window.visualViewport;
+  let fullH = 0;                                   // tallest visible height seen = screen without keyboard
   function fitViewport() {
     if (!vv) return;
-    document.documentElement.style.setProperty('--vvh', Math.round(vv.height) + 'px');
+    const h = Math.round(vv.height), root = document.documentElement;
+    root.style.setProperty('--vvh', h + 'px');
+    fullH = Math.max(fullH, h);
+    const kb = h < fullH - 150;                    // keyboard open: hide the toolbars, give the space to the conversation
+    if (kb !== root.classList.contains('kb')) {
+      root.classList.toggle('kb', kb);
+      requestAnimationFrame(() => {
+        const a = document.activeElement, stream = document.getElementById('stream');
+        if (a && stream && stream.contains(a)) a.scrollIntoView({ block: 'nearest', behavior: 'instant' });
+        else if (stream) stream.scrollTo({ top: stream.scrollHeight, behavior: 'instant' });
+      });
+    }
     if (document.activeElement && /^(TEXTAREA|INPUT)$/.test(document.activeElement.tagName)) window.scrollTo(0, 0);
   }
+  window.addEventListener('orientationchange', () => { fullH = 0; setTimeout(fitViewport, 400); });
   if (vv) vv.addEventListener('resize', fitViewport);
 
   /* ---------- backup buttons in the settings dialog ---------- */

@@ -19,7 +19,18 @@ import shutil
 import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-SRC = os.path.abspath(sys.argv[1] if len(sys.argv) > 1 else os.path.join(HERE, "..", "schreibwerkstatt"))
+def find_desktop():
+    """The desktop version: the first argument, else a folder named schreibwerkstatt next to this folder or one level up."""
+    if len(sys.argv) > 1:
+        return os.path.abspath(sys.argv[1])
+    for up in ("..", os.path.join("..", "..")):
+        cand = os.path.abspath(os.path.join(HERE, up, "schreibwerkstatt"))
+        if os.path.isfile(os.path.join(cand, "server.py")):
+            return cand
+    return os.path.abspath(os.path.join(HERE, "..", "schreibwerkstatt"))
+
+
+SRC = find_desktop()
 MOBILE = os.path.join(HERE, "mobile")
 OUT = os.path.join(HERE, "docs")
 KEEP = {"pyodide"}                                   # never deleted by a rebuild

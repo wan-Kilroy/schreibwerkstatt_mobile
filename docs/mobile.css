@@ -58,7 +58,7 @@ textarea, input, select, .rt-input, .field input, .field select, .langbar select
   .pending .txt{flex:1 1 100%; white-space:normal}
   .pending .btn{flex:1 1 0}
   .composer{padding:6px}
-  .composer textarea{min-height:48px}
+  .composer textarea{min-height:calc(3em + 12px)}
   .compose-hint{font-size:11px; margin-top:4px}
   .hist-head{padding-top:10px}
   .detail-head h2{font-size:17px}
@@ -72,3 +72,11 @@ textarea, input, select, .rt-input, .field input, .field select, .langbar select
 @media (hover:none) and (pointer:coarse) and (max-width:700px){
   .compose-hint{white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
 }
+
+/* touch screens: the keyboard hints (Enter / Shift+Enter) do not apply */
+@media (hover:none) and (pointer:coarse){ .compose-hint{display:none} }
+/* keyboard open (boot.js sets html.kb): only the tabs row stays on top; the conversation gets the space */
+html.kb .langbar, html.kb #practice .toolbar, html.kb .compose-hint, html.kb .banner{display:none !important}
+html.kb .top-in{padding-top:4px; padding-bottom:4px}
+html.kb .dock{padding-bottom:6px}
+html.kb .pending{margin-bottom:6px; padding:6px 10px}
