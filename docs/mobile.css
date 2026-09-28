@@ -52,7 +52,7 @@ textarea, input, select, .rt-input, .field input, .field select, .langbar select
   .bubble, .fb{max-width:100%}
   .fb{padding:10px 12px}
   .fb-actions .btn{flex:1 1 auto}
-  .report{margin-left:0; width:100%}
+  .report{margin-left:auto}
   .dock{padding-top:6px}
   .pending{flex-wrap:wrap; gap:6px 8px; padding:8px 10px}
   .pending .txt{flex:1 1 100%; white-space:normal}
@@ -76,7 +76,40 @@ textarea, input, select, .rt-input, .field input, .field select, .langbar select
 /* touch screens: the keyboard hints (Enter / Shift+Enter) do not apply */
 @media (hover:none) and (pointer:coarse){ .compose-hint{display:none} }
 /* keyboard open (boot.js sets html.kb): only the tabs row stays on top; the conversation gets the space */
-html.kb .langbar, html.kb #practice .toolbar, html.kb .compose-hint, html.kb .banner{display:none !important}
+html.kb .compose-hint, html.kb .banner{display:none !important}
 html.kb .top-in{padding-top:4px; padding-bottom:4px}
 html.kb .dock{padding-bottom:6px}
 html.kb .pending{margin-bottom:6px; padding:6px 10px}
+
+/* ☰ menu (boot.js moves the language bar and the practice toolbar into it) */
+.top{position:relative}
+.top-in{flex-wrap:nowrap}
+.status{min-width:0; flex:0 1 auto}
+.m-menubtn{position:relative; flex:none; display:inline-flex; align-items:center; gap:6px; border:1px solid var(--line-2); background:var(--surface);
+  color:var(--ink); border-radius:999px; padding:5px 10px 5px 12px; min-height:36px; cursor:pointer}
+.m-menubtn[aria-expanded="true"]{background:var(--accent-soft); border-color:var(--accent-line)}
+.m-badge{font-size:12px; color:var(--ink-2); font-variant-numeric:tabular-nums; white-space:nowrap}
+.m-dot{position:absolute; top:4px; right:6px; width:7px; height:7px; border-radius:50%; background:var(--accent)}
+.m-menu{position:absolute; left:0; right:0; top:100%; z-index:40; background:var(--surface); border-bottom:1px solid var(--line);
+  box-shadow:0 12px 24px rgba(0,0,0,.18); padding:10px 16px 14px; max-height:calc(var(--vvh, 100dvh) - 70px); overflow-y:auto}
+.m-sec + .m-sec{margin-top:12px; padding-top:12px; border-top:1px solid var(--line)}
+.m-h{font-size:12px; color:var(--ink-3); margin-bottom:8px; letter-spacing:.02em}
+.m-menu .langbar{display:flex; width:100%; gap:8px; justify-content:space-between}
+.m-menu .langbar label{flex:1 1 0; min-width:0; display:flex; flex-direction:column; align-items:stretch; gap:4px; font-size:12px}
+.m-menu .langbar select{width:100%; padding:8px}
+.m-menu .toolbar{padding:0; width:100%; max-width:none; display:flex; flex-direction:column; align-items:stretch; gap:10px}
+.m-menu .topic{flex:none; min-width:0; width:100%}
+.m-menu .tb-actions{display:flex; gap:8px; width:100%}
+.m-menu .tb-actions .btn{flex:1 1 0}
+@media (max-width:700px){ .logo{display:none} .brand{display:none} .tabs{flex:none} .status{margin-left:auto} }
+
+/* the exercise card: its "I don't know / skip" are the same as the bar above the input -> only the bar keeps them */
+@media (max-width:700px){
+  .bubble.prompt .prompt-foot [data-act=giveup], .bubble.prompt .prompt-foot [data-act=giveup] + .btn{display:none}
+  .prompt-foot{flex-wrap:wrap; row-gap:4px}
+  .prompt-foot .btn{white-space:nowrap}
+  .pending{display:flex; flex-wrap:wrap; align-items:center; gap:6px 8px}
+  .pending .txt{flex:1 1 100%; white-space:normal}
+  .pending .btn{flex:none; min-height:32px; padding:4px 14px}
+  #btnGiveUp{margin-left:auto}
+}

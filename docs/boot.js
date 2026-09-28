@@ -158,6 +158,50 @@
     };
   }
 
+
+  /* ---------- ☰ menu: languages, level, topic and the practice buttons live here instead of on the screen ---------- */
+  const MT = { zh: { menu: '菜单', langs: '语言和水平', practice: '练习' }, en: { menu: 'Menu', langs: 'Languages and level', practice: 'Practice' },
+    de: { menu: 'Menü', langs: 'Sprachen und Niveau', practice: 'Üben' } };
+  const mt = k => (MT[lang()] || MT.zh)[k];
+  function addMenu() {
+    const top = document.querySelector('.top'), row = document.querySelector('.top-in');
+    const langbar = document.querySelector('.langbar'), toolbar = document.querySelector('#practice .toolbar');
+    if (!top || !row || !langbar || !toolbar || document.getElementById('mMenu')) return;
+    const btn = document.createElement('button');
+    btn.type = 'button'; btn.id = 'mMenuBtn'; btn.className = 'm-menubtn'; btn.setAttribute('aria-expanded', 'false');
+    btn.innerHTML = '<span class="m-badge"></span><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><i class="m-dot" hidden></i>';
+    row.appendChild(btn);
+    const panel = document.createElement('div');
+    panel.id = 'mMenu'; panel.className = 'm-menu'; panel.hidden = true;
+    const sec = (cls, node) => { const d = document.createElement('div'); d.className = 'm-sec ' + cls; const h = document.createElement('div'); h.className = 'm-h'; d.append(h, node); return d; };
+    const sLang = sec('m-langs', langbar), sPrac = sec('m-prac', toolbar);
+    panel.append(sLang, sPrac);
+    top.appendChild(panel);
+    const topic = document.getElementById('topic');
+    const badge = () => {
+      const v = id => (document.getElementById(id) || {}).value || '';
+      btn.querySelector('.m-badge').textContent = `${v('selLearn').toUpperCase()}·${v('selExplain').toUpperCase()} ${v('selLevel')}`;
+      btn.querySelector('.m-dot').hidden = !(topic && topic.value.trim());
+      btn.setAttribute('aria-label', mt('menu'));
+      sLang.querySelector('.m-h').textContent = mt('langs');
+      sPrac.querySelector('.m-h').textContent = mt('practice');
+    };
+    const setOpen = open => {
+      panel.hidden = !open; btn.setAttribute('aria-expanded', String(open));
+      if (open) { sPrac.hidden = !document.getElementById('practice').classList.contains('active'); badge(); }
+    };
+    btn.addEventListener('click', e => { e.stopPropagation(); setOpen(panel.hidden); });
+    document.addEventListener('click', e => { if (!panel.hidden && !panel.contains(e.target) && !btn.contains(e.target)) setOpen(false); });
+    toolbar.querySelectorAll('button').forEach(b => b.addEventListener('click', () => setOpen(false)));
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') setOpen(false); });
+    if (topic) topic.addEventListener('input', badge);
+    ['selLearn', 'selExplain', 'selLevel'].forEach(id => { const el = document.getElementById(id); if (el) el.addEventListener('change', () => setTimeout(badge, 0)); });
+    document.querySelectorAll('.tab').forEach(t => t.addEventListener('click', () => setOpen(false)));
+    new MutationObserver(badge).observe(document.documentElement, { attributes: true, attributeFilter: ['lang'] });
+    setInterval(badge, 1500);                     // the page sets the selects from the saved settings without an event
+    badge();
+  }
+
   function onReady() {
     showSplash();
     if (ready || bootError) { if (ready) hideSplash(); else showBootError(bootError); }
@@ -167,6 +211,7 @@
     const ol = prov && prov.querySelector('option[value=ollama]');
     if (ol) ol.remove();
     addBackup();
+    addMenu();
     fitViewport();
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', onReady); else onReady();
