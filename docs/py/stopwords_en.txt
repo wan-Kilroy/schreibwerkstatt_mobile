@@ -1,0 +1,30 @@
+# English stop words for the topic de-duplication (exercise sentences written in English).
+# Words separated by spaces or new lines, lower case; everything after # is ignored.  Add words that are too common to mean a topic.
+# function words
+a an the this that these those some any each every no not none all both either neither
+i me my mine myself you your yours yourself he him his himself she her hers herself it its itself
+we us our ours ourselves they them their theirs themselves one ones someone something anyone anything everyone everything nobody nothing
+who whom whose which what when where why how whether
+and or but so because although though if unless since while as than then also too very really quite just only even still already yet
+about above across after against along among around at before behind below beside between beyond by down during except for from
+in inside into near of off on onto out outside over past through to toward towards under until up upon with within without
+am is are was were be been being have has had having do does did doing done will would shall should can could may might must
+ought let lets don't doesn't didn't isn't aren't wasn't weren't can't couldn't won't wouldn't shouldn't i'm i've i'd i'll
+you're you've it's that's there's here there more most much many few little less least lot lots other another such own same
+again ever never always often sometimes usually maybe perhaps please yes okay ok well back away
+# very general verbs
+get gets got gotten getting go goes went gone going come comes came coming make makes made making take takes took taken taking
+want wants wanted like likes liked need needs needed know knows knew known think thinks thought say says said tell tells told
+give gives gave given see sees saw seen look looks looked find finds found try tries tried use uses used keep kept feel feels felt
+put puts start starts started help helps helped ask asks asked seem seems become becomes became leave leaves left
+# verbs that grammar points pull in (present perfect -> "finished", gerunds -> "enjoy", "stop" ...): not topics.
+# Base forms are enough, other forms share the stem (finish -> finished, finishes, finishing); irregular forms listed
+finish begin began begun stop end decide plan hope forget forgot forgotten remember manage continue
+enjoy love hate prefer learn learnt wait happen
+# time and quantity words (not topics)
+today tomorrow yesterday tonight morning afternoon evening night day days week weeks weekend month months year years
+hour hours minute minutes second seconds time times moment now soon later early late last next first
+monday tuesday wednesday thursday friday saturday sunday
+two three four five six seven eight nine ten twenty thirty hundred half
+# domain words of this app
+german english chinese french language languages

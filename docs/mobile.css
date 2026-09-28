@@ -1,0 +1,74 @@
+/* Phone version: additions to app.css (the desktop stylesheet stays unchanged) */
+body{height:var(--vvh, 100dvh); padding:env(safe-area-inset-top) env(safe-area-inset-right) 0 env(safe-area-inset-left)}
+.dock{padding-bottom:max(12px, env(safe-area-inset-bottom))}
+html{-webkit-text-size-adjust:100%; overscroll-behavior:none}
+body{overscroll-behavior:none}
+button, .tab, .day, select{touch-action:manipulation}          /* no double-tap zoom delay */
+
+/* start-up screen while Python loads */
+.m-splash{position:fixed; inset:0; z-index:100; display:grid; place-items:center; background:var(--bg); padding:24px}
+.m-box{display:flex; flex-direction:column; align-items:center; gap:10px; text-align:center; max-width:320px}
+.m-box .logo{width:56px; height:56px; font-size:28px; border-radius:16px}
+.m-box b{font-size:18px}
+.m-box p{margin:0; color:var(--ink-2); font-size:14px; word-break:break-word}
+.m-box .m-s{color:var(--ink-3); font-size:13px; min-height:1.4em}
+.m-l::after{content:""; display:inline-block; width:1em; text-align:left; animation:m-dots 1.2s steps(4) infinite}
+@keyframes m-dots{0%{content:""} 25%{content:"."} 50%{content:".."} 75%{content:"..."}}
+.m-backup .keyrow{flex-wrap:wrap}
+
+/* touch screens: bigger targets; no hover effects that stick after a tap */
+@media (hover:none) and (pointer:coarse){
+  .btn{min-height:42px}
+  .btn.sm{min-height:36px; padding:6px 12px}
+  .tab{padding:8px 16px}
+  .langbar select{padding:6px 8px}
+  .rt-seg .btn{min-height:34px}
+  .btn:hover:not(:disabled){background:var(--surface)}
+  .btn.primary:hover:not(:disabled){filter:none; background:var(--accent)}
+  .card:hover{border-color:var(--line)}
+}
+
+/* 16px in every field: smaller text makes iOS Safari zoom in when the field gets the focus */
+textarea, input, select, .rt-input, .field input, .field select, .langbar select{font-size:16px !important}
+
+@media (max-width:700px){
+  .wrap{padding:0 12px}
+  .top-in{gap:8px 10px; min-height:0; padding-top:6px; padding-bottom:6px}
+  .brand b, .brand small{display:none}
+  .logo{width:30px; height:30px; font-size:16px; border-radius:9px}
+  .tabs{margin-left:0}
+  .status{padding:5px 10px}
+  .status span{max-width:34vw}
+  .langbar{order:5; width:100%; justify-content:space-between; gap:6px}
+  .langbar label{flex:1 1 0; min-width:0}
+  .langbar select{flex:1; min-width:0; width:100%}
+  .toolbar{padding-top:8px; padding-bottom:8px; gap:8px}
+  .topic{flex:1 1 100%; min-width:0}
+  .topic input{padding:7px 0}
+  .tb-actions{width:100%}
+  .tb-actions .btn{flex:1 1 0; padding:8px 6px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+  .msg{margin:12px 0}
+  .pill{white-space:nowrap}
+  .bubble, .fb{max-width:100%}
+  .fb{padding:10px 12px}
+  .fb-actions .btn{flex:1 1 auto}
+  .report{margin-left:0; width:100%}
+  .dock{padding-top:6px}
+  .pending{flex-wrap:wrap; gap:6px 8px; padding:8px 10px}
+  .pending .txt{flex:1 1 100%; white-space:normal}
+  .pending .btn{flex:1 1 0}
+  .composer{padding:6px}
+  .composer textarea{min-height:48px}
+  .compose-hint{font-size:11px; margin-top:4px}
+  .hist-head{padding-top:10px}
+  .detail-head h2{font-size:17px}
+  .sums .sep{margin:0 6px}
+  .errlist{grid-template-columns:minmax(80px, max-content) 1fr auto}
+  dialog{width:100vw; max-width:100vw; max-height:100dvh; height:100dvh; border-radius:0; margin:0; border:0}
+  .dlg{padding:max(14px, env(safe-area-inset-top)) 16px max(14px, env(safe-area-inset-bottom))}
+  .toast{bottom:calc(120px + env(safe-area-inset-bottom))}
+}
+/* on a phone the keyboard hint (Enter / Shift+Enter) is not what matters: shorter, one line */
+@media (hover:none) and (pointer:coarse) and (max-width:700px){
+  .compose-hint{white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+}

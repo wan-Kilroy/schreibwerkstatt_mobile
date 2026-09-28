@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Schreiben">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#1f6f5c">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<title>Schreibwerkstatt</title>
+<link rel="stylesheet" href="app.css">
+<link rel="stylesheet" href="mobile.css">
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap top-in">
+    <div class="brand">
+      <div class="logo" id="logo" aria-hidden="true">Ä</div>
+      <div><b>Schreibwerkstatt</b><small id="brandSub"></small></div>
+    </div>
+    <nav class="tabs" role="tablist" data-i18n-aria="navPages">
+      <button class="tab" role="tab" data-view="practice" aria-selected="true" data-i18n="tabPractice"></button>
+      <button class="tab" role="tab" data-view="history" aria-selected="false" data-i18n="tabHistory"></button>
+    </nav>
+    <div class="langbar" role="group" data-i18n-aria="langAria">
+      <label><span data-i18n="learnLbl"></span><select id="selLearn"></select></label>
+      <label><span data-i18n="explainLbl"></span><select id="selExplain"></select></label>
+      <label><span data-i18n="levelLbl"></span><select id="selLevel"><option>A1</option><option>A2</option><option>B1</option><option>B2</option><option>C1</option><option>C2</option></select></label>
+    </div>
+    <button class="status mock" id="status" type="button"><i></i><span data-i18n="connecting"></span></button>
+  </div>
+</header>
+
+<main>
+  <!-- ================= 练习页 ================= -->
+  <section id="practice" class="page active" data-i18n-aria="tabPractice">
+    <div class="wrap toolbar">
+      <label class="topic"><span data-i18n="topicLbl"></span><input id="topic" type="text" data-i18n-ph="topicPh"></label>
+      <div class="tb-actions">
+        <button class="btn" id="btnPrompt"></button>
+        <button class="btn" id="btnOpen" data-i18n="btnOpen"></button>
+        <button class="btn ghost" id="btnNew" data-i18n="btnNew"></button>
+      </div>
+    </div>
+
+    <div class="banner" id="banner" hidden></div>
+    <div class="stream" id="stream" aria-live="polite">
+      <div class="wrap" id="streamIn"></div>
+    </div>
+
+    <div class="dock">
+      <div class="wrap">
+        <div class="pending" id="pendingBar" hidden>
+          <span class="txt"></span>
+          <button class="btn sm" id="btnGiveUp" data-i18n="giveUp"></button>
+          <button class="btn sm" id="btnSkip" data-i18n="skip"></button>
+        </div>
+        <div class="composer">
+          <textarea id="input" rows="1" data-i18n-aria="inputAria"></textarea>
+          <button class="btn primary" id="btnSend" data-i18n="send"></button>
+        </div>
+        <div class="compose-hint" id="composeHint"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 历史页 ================= -->
+  <section id="history" class="page" data-i18n-aria="tabHistory">
+    <div id="histList" style="display:flex;flex-direction:column;flex:1;min-height:0">
+      <div class="wrap hist-head">
+        <div class="statsrow" id="statsRow" hidden>
+          <div class="sums" id="stSums"></div>
+          <button class="btn sm" id="btnStats" type="button" data-i18n="btnStats"></button>
+        </div>
+        <div class="hist-tools">
+          <label class="search"><span aria-hidden="true">🔍</span>
+            <input id="q" type="search" data-i18n-ph="qPh" data-i18n-aria="qAria"></label>
+          <select id="histLang" data-i18n-aria="histLangAria"></select>
+        </div>
+        <div class="count" id="histCount"></div>
+        <div class="dbnote" id="dbNote"></div>
+      </div>
+      <div class="hist-scroll"><div class="wrap" id="histCards"></div></div>
+    </div>
+    <div id="histStats" style="display:none;flex-direction:column;flex:1;min-height:0">
+      <div class="wrap detail-head">
+        <div class="detail-actions"><button class="btn sm" id="btnStatsBack" type="button" data-i18n="backList"></button></div>
+        <h2 data-i18n="statsH"></h2>
+        <p data-i18n="statsP"></p>
+      </div>
+      <div class="hist-scroll"><div class="wrap">
+        <div class="panel">
+          <div class="panel-top">
+            <div class="cap" id="stRange"></div>
+            <div class="seg" role="group" data-i18n-aria="rangeAria">
+              <button class="btn sm" type="button" data-weeks="26" aria-pressed="true" data-i18n="half"></button>
+              <button class="btn sm" type="button" data-weeks="53" aria-pressed="false" data-i18n="year"></button>
+            </div>
+          </div>
+          <div class="heat-scroll" id="heatScroll"><div class="heat" id="heat"></div></div>
+          <div class="legend" aria-hidden="true"><span data-i18n="less"></span> <i></i><i class="lv1"></i><i class="lv2"></i><i class="lv3"></i><i class="lv4"></i> <span data-i18n="more"></span>
+            <span id="stLegend" style="margin-left:8px"></span></div>
+        </div>
+        <div class="panel daybox" id="stDay" aria-live="polite"></div>
+        <div class="panel daybox revbox" id="stRev" hidden></div>
+        <div class="panel daybox focbox" id="stFoci" hidden></div>
+        <div class="panel daybox errbox" id="stErr"></div>
+      </div></div>
+    </div>
+    <div id="histDetail" style="display:none;flex-direction:column;flex:1;min-height:0">
+      <div class="wrap detail-head">
+        <div class="detail-actions">
+          <button class="btn sm" id="btnBack" data-i18n="backList"></button>
+          <button class="btn sm danger" id="btnDel" data-i18n="delSession"></button>
+        </div>
+        <h2 id="dTitle"></h2>
+        <p id="dSummary"></p>
+        <div class="meta" id="dMeta"></div>
+      </div>
+      <div class="hist-scroll"><div class="wrap" id="dStream"></div></div>
+    </div>
+  </section>
+</main>
+
+<!-- ================= 设置 ================= -->
+<dialog id="dlg" aria-labelledby="dlgTitle">
+  <form class="dlg" method="dialog" id="dlgForm" autocomplete="off">
+    <h3 id="dlgTitle" data-i18n="dlgTitle"></h3>
+    <div class="dmsg warn" id="dlgNoServer" hidden data-i18n="noServerDlg"></div>
+    <div class="field">
+      <label for="cfgProvider" data-i18n="provLbl"></label>
+      <select id="cfgProvider">
+        <option value="ollama" data-i18n="provOllama"></option>
+        <option value="deepseek" data-i18n="provDeepseek"></option>
+        <option value="openai" data-i18n="provOpenai"></option>
+        <option value="anthropic" data-i18n="provAnthropic"></option>
+      </select>
+    </div>
+    <div class="field" id="fPreset">
+      <label for="cfgPreset" data-i18n="presetLbl"></label>
+      <select id="cfgPreset"></select>
+      <small data-i18n="presetHint"></small>
+    </div>
+    <div class="field">
+      <label for="cfgBase" id="lblBase"></label>
+      <input id="cfgBase" type="text" spellcheck="false">
+      <small id="hintBase"></small>
+    </div>
+    <div class="field" id="fKey">
+      <label for="cfgKey">API Key</label>
+      <div class="keyrow"><input id="cfgKey" type="password" spellcheck="false" autocomplete="new-password"><button class="btn sm" type="button" id="btnClearKey" data-i18n="clear"></button></div>
+      <small data-i18n="keyHint"></small>
+    </div>
+    <div class="field">
+      <label for="cfgModel" data-i18n="modelLbl"></label>
+      <input id="cfgModel" type="text" spellcheck="false" list="modelList">
+      <datalist id="modelList"></datalist>
+      <small id="hintModel"></small>
+    </div>
+    <div class="field" id="fThink">
+      <label for="cfgThink" id="lblThink"></label>
+      <select id="cfgThink">
+        <option value="low" data-i18n="thinkLow"></option>
+        <option value="medium">medium</option>
+        <option value="high" data-i18n="thinkHigh"></option>
+        <option value="off" data-i18n="thinkOff"></option>
+      </select>
+      <small data-i18n="thinkHint"></small>
+    </div>
+    <div class="field">
+      <label for="cfgSource" data-i18n="srcLbl"></label>
+      <select id="cfgSource">
+        <option value="auto" data-i18n="srcAuto"></option>
+        <option value="mock" data-i18n="srcMock"></option>
+      </select>
+    </div>
+    <div class="field">
+      <label for="cfgDedupe" data-i18n="dedupeLbl"></label>
+      <select id="cfgDedupe">
+        <option value="local" data-i18n="dedupeLocal"></option>
+        <option value="summary" data-i18n="dedupeSummary"></option>
+      </select>
+      <small data-i18n="dedupeHint"></small>
+    </div>
+    <div class="dmsg" id="cfgMsg" role="status"></div>
+    <div class="btns">
+      <span class="autosave" data-i18n="autosave"></span>
+      <button class="btn" type="button" id="btnTest" data-i18n="testConn"></button>
+      <button class="btn primary" type="button" id="btnClose" data-i18n="done"></button>
+    </div>
+  </form>
+</dialog>
+<script src="boot.js"></script>
+<script type="module" src="i18n_mobile.js"></script>
+<script type="module" src="js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,32 @@
+# German stop words for the topic de-duplication (exercise sentences written in German).
+# Words separated by spaces or new lines, lower case; everything after # is ignored.  Add words that are too common to mean a topic.
+# function words
+der die das den dem des ein eine einen einem einer eines kein keine keinen keinem keiner
+ich mich mir mein meine meinen meinem meiner du dich dir dein deine deinen deinem deiner
+er ihn ihm sein seine seinen seinem seiner sie ihr ihre ihren ihrem ihrer es wir uns unser unsere unseren unserem
+euch euer eure ihnen man sich selbst jemand etwas nichts alles alle allen jeder jede jedes jeden jedem
+dieser diese dieses diesen diesem jener welche welcher welches was wer wen wem wessen wo wann warum wie woher wohin
+und oder aber doch denn sondern weil obwohl dass ob wenn als falls damit sodass während bevor nachdem seit seitdem
+auch noch schon nur sehr so zu zum zur ganz gar mal immer nie oft manchmal vielleicht wieder jetzt dann da hier dort
+an am auf aus bei beim bis durch für gegen hinter im in ins mit nach neben ohne über um unter vom von vor zwischen
+ab außer gegenüber trotz wegen statt innerhalb außerhalb
+bin bist ist sind seid war warst waren wart gewesen sein habe hast hat haben habt hatte hattest hatten gehabt
+werde wirst wird werden werdet wurde wurden geworden würde würden wäre wären hätte hätten
+kann kannst können konnte konnten muss musst müssen musste mussten soll sollst sollen sollte sollten
+will willst wollen wollte wollten darf darfst dürfen durfte mag möchte möchtest möchten
+nicht ja nein bitte gern gerne mehr viel viele wenig wenige andere anderen anderer anderes eigentlich wirklich
+# very general verbs
+gehen geht ging gegangen kommen kommt kam gekommen machen macht machte gemacht geben gibt gab gegeben
+sagen sagt sagte gesagt finden findet fand gefunden sehen sieht sah gesehen wissen weiß wusste gewusst
+lassen lässt ließ nehmen nimmt nahm genommen brauchen braucht brauchte gebraucht bekommen bekommt bekam
+# verbs that grammar points pull in (Perfekt -> "beendet", Infinitivsatz -> "versuchen" ...): not topics
+fertig beenden beendet anfangen fängt angefangen beginnen beginnt begann begonnen aufhören hört aufgehört
+versuchen versucht vergessen vergisst vergaß erinnern erinnert planen plant geplant hoffen hofft gehofft
+entscheiden entschied entschieden lernen lernt gelernt warten wartet gewartet passieren passiert
+# time and quantity words (not topics)
+letzte letzter letztes letzten heute morgen gestern abend abends morgens mittag nachmittag nacht nachts tag tage tagen woche wochen wochenende
+monat monate monaten jahr jahre jahren stunde stunden minute minuten sekunde sekunden uhr zeit mal letzte letzten nächste nächsten
+montag dienstag mittwoch donnerstag freitag samstag sonntag
+zwei drei vier fünf sechs sieben acht neun zehn zwanzig dreißig hundert halb halbe
+# domain words of this app
+deutsch deutschen englisch chinesisch französisch sprache sprachen
